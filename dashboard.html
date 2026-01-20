@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EchoText Dashboard</title>
+
+  <style>
+    :root{
+      --bg1:#0f172a;
+      --bg2:#111827;
+      --card: rgba(255,255,255,0.06);
+      --card2: rgba(255,255,255,0.10);
+      --border: rgba(255,255,255,0.12);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.65);
+      --shadow: 0 16px 60px rgba(0,0,0,0.35);
+      --accent:#7c3aed;
+      --accent2:#22c55e;
+      --danger:#ef4444;
+      --warn:#f59e0b;
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 700px at 10% 10%, rgba(124,58,237,0.25), transparent 55%),
+        radial-gradient(900px 600px at 90% 30%, rgba(34,197,94,0.18), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+    }
+
+    /* Navbar */
+    .nav{
+      position: sticky; top:0;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      background: rgba(15, 23, 42, 0.65);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-inner{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap: 10px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+    .logo{
+      width: 38px; height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), #06b6d4);
+      box-shadow: 0 12px 30px rgba(124,58,237,0.25);
+    }
+    .nav-right{
+      display:flex; align-items:center; gap: 10px;
+    }
+    .pill{
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      display:flex; align-items:center; gap: 8px;
+    }
+    .dot{
+      width: 8px; height: 8px; border-radius:999px;
+      background: var(--accent2);
+      box-shadow: 0 0 0 6px rgba(34,197,94,0.12);
+    }
+    .btn{
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 14px;
+      cursor:pointer;
+      transition: 0.15s ease;
+      font-weight: 650;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 8px;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,0.09); }
+    .btn-primary{
+      border: none;
+      background: linear-gradient(135deg, var(--accent), #06b6d4);
+      box-shadow: 0 18px 55px rgba(124,58,237,0.20);
+    }
+    .btn-primary:hover{ filter: brightness(1.03); }
+
+    /* Layout */
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 26px 18px 50px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap: 18px;
+      margin-top: 22px;
+    }
+    @media(max-width: 920px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .title{
+      font-size: 18px;
+      font-weight: 800;
+      margin: 2px 0 6px;
+    }
+    .subtitle{
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0 0 16px;
+      line-height: 1.4;
+    }
+
+    /* Upload area */
+    .drop{
+      border: 1.5px dashed rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.04);
+      border-radius: 20px;
+      padding: 16px;
+    }
+    .file{
+      display:flex; flex-direction:column; gap: 12px;
+    }
+    .input{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.20);
+      color: var(--text);
+      outline: none;
+    }
+    .help{
+      font-size:12px;
+      color: var(--muted);
+    }
+
+    /* Loader */
+    .loader{
+      display:none;
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.20);
+      align-items:center;
+      gap: 12px;
+    }
+    .spinner{
+      width: 18px; height: 18px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,0.18);
+      border-top-color: rgba(255,255,255,0.85);
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+
+    /* Output boxes */
+    .section-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .badge{
+      font-size:12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--muted);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .box{
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 18px;
+      padding: 14px;
+      min-height: 120px;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .row{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .tiny{
+      font-size: 12px; color: var(--muted);
+    }
+
+    .err{
+      display:none;
+      margin-top: 12px;
+      padding: 12px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(239,68,68,0.25);
+      background: rgba(239,68,68,0.10);
+      color: rgba(255,255,255,0.88);
+      font-size: 13px;
+    }
+
+    /* History */
+    .hist-item{
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.20);
+      margin-bottom: 10px;
+    }
+    .hist-top{
+      display:flex; align-items:center; justify-content:space-between; gap: 10px;
+    }
+    .hist-file{
+      font-weight: 800;
+      font-size: 13px;
+    }
+    .hist-sum{
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 8px;
+      line-height: 1.4;
+      overflow:hidden;
+      display:-webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+
+    .btn-sm{
+      padding: 8px 10px;
+      border-radius: 14px;
+      font-size: 12px;
+    }
+
+    .split{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <div class="nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <div style="font-size:15px;">EchoText</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">Audio → Transcript → Summary</div>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <div class="pill"><span class="dot"></span> Online</div>
+        <a class="btn btn-sm" href="/logout">Logout</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="section-head">
+        <div>
+          <div class="title">Dashboard</div>
+          <div class="subtitle">Upload a WAV file and get an offline AI summary. No external summarization API.</div>
+        </div>
+        <div class="badge" id="status">Idle</div>
+      </div>
+
+      <div class="grid">
+        <!-- LEFT: Upload -->
+        <div class="card" style="padding:18px;">
+          <div class="title" style="font-size:16px;">Upload audio</div>
+          <div class="subtitle">Supported format: WAV (mono PCM). Best for Vosk.</div>
+
+          <div class="drop">
+            <form id="uploadForm" class="file">
+              <input class="input" type="file" name="audio" accept=".wav" required />
+              <button class="btn btn-primary" type="submit">Process Audio</button>
+              <div class="help">Tip: keep audio under 2–3 minutes for fastest demo.</div>
+            </form>
+
+            <div class="loader" id="loader">
+              <div class="spinner"></div>
+              <div>
+                <div style="font-weight:800;">Processing…</div>
+                <div class="tiny">Transcribing with Vosk + summarizing locally</div>
+              </div>
+            </div>
+
+            <div class="err" id="errBox"></div>
+          </div>
+
+          <div class="row" style="margin-top: 14px;">
+            <button class="btn btn-sm" onclick="loadHistory()">Refresh history</button>
+            <div class="tiny" id="histMeta">—</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Output + History -->
+        <div class="split">
+          <!-- Output -->
+          <div class="card" style="padding:18px;">
+            <div class="section-head">
+              <div class="title" style="font-size:16px;">Output</div>
+              <div style="display:flex; gap:10px;">
+                <button class="btn btn-sm" onclick="copyText('transcriptionBox')">Copy transcript</button>
+                <button class="btn btn-sm" onclick="copyText('summaryBox')">Copy summary</button>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 10px;">
+              <div class="tiny" style="margin-bottom: 7px;">Transcription</div>
+              <div class="box" id="transcriptionBox">No transcription yet.</div>
+            </div>
+
+            <div>
+              <div class="tiny" style="margin-bottom: 7px;">Summary</div>
+              <div class="box" id="summaryBox">No summary yet.</div>
+            </div>
+          </div>
+
+          <!-- History -->
+          <div class="card" style="padding:18px;">
+            <div class="section-head">
+              <div class="title" style="font-size:16px;">History</div>
+              <div class="badge" id="historyStatus">—</div>
+            </div>
+            <div id="historyList" class="tiny">Loading history...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("uploadForm");
+    const loader = document.getElementById("loader");
+    const errBox = document.getElementById("errBox");
+    const status = document.getElementById("status");
+    const transcriptionBox = document.getElementById("transcriptionBox");
+    const summaryBox = document.getElementById("summaryBox");
+    const historyList = document.getElementById("historyList");
+    const historyStatus = document.getElementById("historyStatus");
+    const histMeta = document.getElementById("histMeta");
+
+    function setErr(msg){
+      if(!msg){
+        errBox.style.display = "none";
+        errBox.textContent = "";
+        return;
+      }
+      errBox.style.display = "block";
+      errBox.textContent = msg;
+    }
+
+    function setBusy(on){
+      loader.style.display = on ? "flex" : "none";
+      status.textContent = on ? "Processing…" : "Idle";
+    }
+
+    async function copyText(id){
+      const el = document.getElementById(id);
+      const text = el.textContent || "";
+      try{
+        await navigator.clipboard.writeText(text);
+        status.textContent = "Copied ✅";
+        setTimeout(()=> status.textContent="Idle", 900);
+      }catch{
+        setErr("Clipboard blocked. Copy manually.");
+      }
+    }
+
+    function safeText(s){
+      return (s || "").toString();
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      setErr(null);
+      setBusy(true);
+      status.textContent = "Uploading…";
+
+      try{
+        const formData = new FormData(form);
+
+        const res = await fetch("/upload", {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await res.json().catch(()=> ({}));
+
+        if(!res.ok){
+          throw new Error(data.error || "Upload failed.");
+        }
+
+        transcriptionBox.textContent = safeText(data.transcription || "No transcript returned.");
+        summaryBox.textContent = safeText(data.summary || "No summary returned.");
+
+        status.textContent = "Done ✅";
+        await loadHistory();
+
+      }catch(err){
+        status.textContent = "Error ❌";
+        setErr(err.message);
+      }finally{
+        setBusy(false);
+      }
+    });
+
+    async function loadHistory(){
+      historyStatus.textContent = "Loading…";
+      try{
+        const res = await fetch("/history");
+        const records = await res.json();
+
+        if(!Array.isArray(records) || records.length === 0){
+          historyList.innerHTML = `<div class="tiny">No history yet. Upload an audio to generate your first record.</div>`;
+          historyStatus.textContent = "0 items";
+          histMeta.textContent = "No recent uploads";
+          return;
+        }
+
+        historyStatus.textContent = `${records.length} items`;
+        histMeta.textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+
+        historyList.innerHTML = records.slice(0, 6).map(r => `
+          <div class="hist-item">
+            <div class="hist-top">
+              <div class="hist-file">${safeText(r.filename || "audio.wav")}</div>
+              <button class="btn btn-sm" onclick="fillFromHistory('${safeText(r.id || "")}')">View</button>
+            </div>
+            <div class="hist-sum">${safeText(r.summary || "")}</div>
+          </div>
+        `).join("");
+
+        // store globally for quick view
+        window.__records = records;
+
+      }catch{
+        historyStatus.textContent = "Error";
+        historyList.innerHTML = `<div class="tiny">Could not load history.</div>`;
+      }
+    }
+
+    function fillFromHistory(id){
+      const rec = (window.__records || []).find(x => x.id === id);
+      if(!rec) return;
+      // transcript not included (we removed it in /history)
+      summaryBox.textContent = safeText(rec.summary || "");
+      status.textContent = "Loaded from history ✅";
+      setTimeout(()=> status.textContent="Idle", 900);
+    }
+
+    // init
+    loadHistory();
+  </script>
+</body>
+</html>

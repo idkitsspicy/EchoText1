@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signup — EchoText</title>
+
+  <style>
+    :root{
+      --bg1:#0f172a;
+      --bg2:#111827;
+      --card: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.12);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.65);
+      --shadow: 0 16px 60px rgba(0,0,0,0.35);
+      --accent:#7c3aed;
+      --accent2:#06b6d4;
+      --danger:#ef4444;
+      --ok:#22c55e;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      min-height:100vh;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 10% 10%, rgba(124,58,237,0.25), transparent 55%),
+        radial-gradient(900px 600px at 90% 30%, rgba(6,182,212,0.18), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 30px 16px;
+    }
+
+    .card{
+      width: 100%;
+      max-width: 480px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    .brand{
+      display:flex; align-items:center; gap: 12px;
+      font-weight: 950;
+      letter-spacing:0.2px;
+      margin-bottom: 18px;
+    }
+    .logo{
+      width: 40px; height: 40px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 14px 40px rgba(124,58,237,0.22);
+    }
+
+    .h{ font-size: 20px; font-weight: 950; margin: 0 0 6px; }
+    .p{ margin: 0 0 18px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+    label{ font-size: 12px; color: var(--muted); display:block; margin: 0 0 6px; }
+    input{
+      width:100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.22);
+      color: var(--text);
+      outline:none;
+      margin-bottom: 12px;
+    }
+
+    .btn{
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: none;
+      cursor:pointer;
+      font-weight: 900;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 18px 55px rgba(124,58,237,0.18);
+      transition: 0.15s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); filter: brightness(1.03); }
+
+    .row{
+      margin-top: 14px;
+      display:flex; justify-content:space-between; align-items:center; gap: 12px;
+      color: var(--muted); font-size: 12px;
+    }
+    a{ color: rgba(255,255,255,0.82); text-decoration:none; font-weight: 750; }
+    a:hover{ text-decoration:underline; }
+
+    .flash{
+      border-radius: 18px;
+      padding: 12px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      border: 1px solid rgba(239,68,68,0.25);
+      background: rgba(239,68,68,0.10);
+      color: rgba(255,255,255,0.88);
+    }
+
+    .hint{
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.4;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.18);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="brand">
+      <div class="logo"></div>
+      <div>EchoText</div>
+    </div>
+
+    <div class="h">Create account</div>
+    <div class="p">Signup to access offline transcription + summarization and store summaries.</div>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">{{ messages[0] }}</div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="/signup">
+      <label>Email</label>
+      <input type="email" name="email" placeholder="you@example.com" required />
+
+      <label>Password</label>
+      <input type="password" name="password" placeholder="Create a password" required />
+
+      <button class="btn" type="submit">Create account</button>
+    </form>
+
+    <div class="hint">
+      ✅ Email/password auth enabled via Firebase Authentication.<br>
+      ✅ Your summaries are stored securely in Firestore for history.
+    </div>
+
+    <div class="row">
+      <span>Already have an account?</span>
+      <a href="/login">Login →</a>
+    </div>
+
+    <div class="row">
+      <a href="/">← Back to Home</a>
+      <span></span>
+    </div>
+  </div>
+</body>
+</html>
