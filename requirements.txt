@@ -1,9 +1,9 @@
 Flask
-Gunicorn 
+Werkzeug
 python-dotenv
-pymongo
 requests
 vosk
-firebase-admin
-werkzeug
 transformers
+torch
+firebase-admin
+google-cloud-firestore
