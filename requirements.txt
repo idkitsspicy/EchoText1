@@ -6,3 +6,4 @@ requests
 vosk
 firebase-admin
 werkzeug
+transformers
